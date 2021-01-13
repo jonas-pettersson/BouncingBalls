@@ -181,7 +181,23 @@ let evilCircle = new EvilCircle(
 );
 evilCircle.setControls();
 
+var today = new Date();
+var init_h = (h = today.getHours());
+var init_m = (m = today.getMinutes());
+var init_s = (s = today.getSeconds());
+
+var secondCount = 0;
+
 function loop() {
+  today = new Date();
+  h = today.getHours();
+  m = today.getMinutes();
+  s = today.getSeconds();
+
+  if (ballCount > 0) {
+    secondCount = (h - init_h) * 3600 + (m - init_m) * 60 + (s - init_s);
+  }
+
   ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
   ctx.fillRect(0, 0, width, height);
 
@@ -197,7 +213,8 @@ function loop() {
   evilCircle.checkBounds();
   evilCircle.collisionDetect();
 
-  p.textContent = "Ball count: " + (numberOfBalls - ballCount);
+  p.textContent =
+    "Ball count: " + (numberOfBalls - ballCount) + " Time: " + secondCount;
 
   requestAnimationFrame(loop);
 }
