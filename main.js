@@ -7,7 +7,7 @@ const ctx = canvas.getContext("2d");
 const width = (canvas.width = window.innerWidth);
 const height = (canvas.height = window.innerHeight);
 
-const numberOfBalls = 25;
+const numberOfBalls = 1000;
 
 var ballCount = 0;
 
@@ -32,7 +32,7 @@ class EvilCircle extends Shape {
   constructor(x, y) {
     super(x, y, 20, 20);
     this.color = "white";
-    this.size = 10;
+    this.size = 100;
   }
 
   draw() {
