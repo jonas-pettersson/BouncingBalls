@@ -1,10 +1,15 @@
 // setup canvas
 
 const canvas = document.querySelector("canvas");
+const p = document.querySelector("p");
 const ctx = canvas.getContext("2d");
 
 const width = (canvas.width = window.innerWidth);
 const height = (canvas.height = window.innerHeight);
+
+const numberOfBalls = 25;
+
+var ballCount = 0;
 
 // function to generate random number
 
@@ -80,6 +85,7 @@ class EvilCircle extends Shape {
 
         if (distance < this.size + balls[j].size) {
           balls[j].exists = false;
+          ballCount -= 1;
         }
       }
     }
@@ -145,7 +151,7 @@ class Ball extends Shape {
 
 let balls = [];
 
-while (balls.length < 25) {
+while (balls.length < numberOfBalls) {
   let size = random(10, 20);
   let ball = new Ball(
     // ball position always drawn at least one ball width
@@ -166,6 +172,8 @@ while (balls.length < 25) {
 
   balls.push(ball);
 }
+
+ballCount = numberOfBalls;
 
 let evilCircle = new EvilCircle(
   random(10, width - 10),
@@ -188,6 +196,8 @@ function loop() {
   evilCircle.draw();
   evilCircle.checkBounds();
   evilCircle.collisionDetect();
+
+  p.textContent = "Ball count: " + (numberOfBalls - ballCount);
 
   requestAnimationFrame(loop);
 }
