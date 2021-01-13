@@ -1,10 +1,10 @@
 // setup canvas
 
-const canvas = document.querySelector('canvas');
-const ctx = canvas.getContext('2d');
+const canvas = document.querySelector("canvas");
+const ctx = canvas.getContext("2d");
 
-const width = canvas.width = window.innerWidth;
-const height = canvas.height = window.innerHeight;
+const width = (canvas.width = window.innerWidth);
+const height = (canvas.height = window.innerHeight);
 
 // function to generate random number
 
@@ -13,55 +13,91 @@ function random(min, max) {
   return num;
 }
 
-function Ball(x, y, velX, velY, color, size) {
-  this.x = x;
-  this.y = y;
-  this.velX = velX;
-  this.velY = velY;
-  this.color = color;
-  this.size = size;
+class Shape {
+  constructor(x, y, velX, velY) {
+    this.x = x;
+    this.y = y;
+    this.velX = velX;
+    this.velY = velY;
+    this.exists = true;
+  }
 }
 
-Ball.prototype.draw = function() {
-  ctx.beginPath();
-  ctx.fillStyle = this.color;
-  ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
-  ctx.fill();
-}
-
-Ball.prototype.update = function() {
-  if ((this.x + this.size) >= width) {
-    this.velX = -(this.velX);
+class Ball extends Shape {
+  constructor(x, y, velX, velY, color, size) {
+    super(x, y, velX, velY);
+    this.color = color;
+    this.size = size;
   }
 
-  if ((this.x - this.size) <= 0) {
-    this.velX = -(this.velX);
+  draw() {
+    ctx.beginPath();
+    ctx.fillStyle = this.color;
+    ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+    ctx.fill();
   }
 
-  if ((this.y + this.size) >= height) {
-    this.velY = -(this.velY);
+  update() {
+    if (this.x + this.size >= width) {
+      this.velX = -this.velX;
+    }
+
+    if (this.x - this.size <= 0) {
+      this.velX = -this.velX;
+    }
+
+    if (this.y + this.size >= height) {
+      this.velY = -this.velY;
+    }
+
+    if (this.y - this.size <= 0) {
+      this.velY = -this.velY;
+    }
+
+    this.x += this.velX;
+    this.y += this.velY;
   }
 
-  if ((this.y - this.size) <= 0) {
-    this.velY = -(this.velY);
-  }
+  collisionDetect() {
+    for (let j = 0; j < balls.length; j++) {
+      if (!(this === balls[j]) && balls[j].exists) {
+        const dx = this.x - balls[j].x;
+        const dy = this.y - balls[j].y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
 
-  this.x += this.velX;
-  this.y += this.velY;
+        if (distance < this.size + balls[j].size) {
+          balls[j].color = this.color =
+            "rgb(" +
+            random(0, 255) +
+            "," +
+            random(0, 255) +
+            "," +
+            random(0, 255) +
+            ")";
+        }
+      }
+    }
+  }
 }
 
 let balls = [];
 
 while (balls.length < 25) {
-  let size = random(10,20);
+  let size = random(10, 20);
   let ball = new Ball(
     // ball position always drawn at least one ball width
     // away from the edge of the canvas, to avoid drawing errors
-    random(0 + size,width - size),
-    random(0 + size,height - size),
-    random(-7,7),
-    random(-7,7),
-    'rgb(' + random(150,200) + ',' + random(100,200) + ',' + random(100,200) +')',
+    random(0 + size, width - size),
+    random(0 + size, height - size),
+    random(-7, 7),
+    random(-7, 7),
+    "rgb(" +
+      random(150, 200) +
+      "," +
+      random(100, 200) +
+      "," +
+      random(100, 200) +
+      ")",
     size
   );
 
@@ -69,7 +105,7 @@ while (balls.length < 25) {
 }
 
 function loop() {
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+  ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
   ctx.fillRect(0, 0, width, height);
 
   for (let i = 0; i < balls.length; i++) {
@@ -79,20 +115,6 @@ function loop() {
   }
 
   requestAnimationFrame(loop);
-}
-
-Ball.prototype.collisionDetect = function() {
-  for (let j = 0; j < balls.length; j++) {
-    if (!(this === balls[j])) {
-      const dx = this.x - balls[j].x;
-      const dy = this.y - balls[j].y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-
-      if (distance < this.size + balls[j].size) {
-        balls[j].color = this.color = 'rgb(' + random(0, 255) + ',' + random(0, 255) + ',' + random(0, 255) +')';
-      }
-    }
-  }
 }
 
 loop();
